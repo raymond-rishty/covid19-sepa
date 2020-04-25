@@ -10,7 +10,7 @@ class Application(
     private val covidCasesDao: CovidCasesDao,
     private val s3Writer: S3Writer,
     private val state: String,
-    private val regionalCounties: Set<String>
+    private val regionalCounties: Map<String, Int>
 ) {
     companion object {
         @JvmStatic
@@ -39,10 +39,12 @@ class Application(
             return Triple(bucketName, keyName, regionName)
         }
 
-        private fun getCounties(): Set<String> = Application::class.java.getResource("/regioncounties.txt")
+        private fun getCounties(): Map<String, Int> = Application::class.java.getResource("/regioncounties.txt")
             .readText()
             .split(System.lineSeparator())
-            .toSet()
+            .map { it.split(',') }
+            .map { (county, population) -> county to population.toInt() }
+            .toMap()
     }
 
     fun run() {
@@ -53,11 +55,39 @@ class Application(
     }
 
     private fun formatResults(regionalTotals: List<Int>): String {
-        return regionalTotals
+        val resultsWithDate = regionalTotals
             .mapIndexed { index, value -> startingDate.plusDays(index.toLong()) to value }
+
+        val resultsByDate = resultsWithDate.associateBy { it.first }
+
+        val regionalPopulation: Int = regionalCounties.values.sum()
+
+        val dataContents = resultsWithDate
             .dropWhile { it.second == 0 }
-            .joinToString("\n") { it.first.format(DateTimeFormatter.ISO_DATE) + "," + it.second }
+            .map { (date, value) ->
+                val newCases = value - (resultsByDate[date.minusDays(14L)]?.second ?: 0)
+                Result(
+                    date,
+                    value,
+                    newCases,
+                    newCasesAdjusted = (newCases * 100000L) / regionalPopulation
+                )
+            }
+            .joinToString("\n") { (date, totalConfirmed, newCases, newCasesAdjusted) ->
+                "${date.format(DateTimeFormatter.ISO_DATE)},$totalConfirmed,$newCases,$newCasesAdjusted"
+            }
+
+        return "date,total confirmed,14-day new cases,population-adjusted new cases" +
+                System.lineSeparator() +
+                dataContents
     }
+
+    data class Result(
+        val date: LocalDate,
+        val totalConfirmed: Int,
+        val newCases: Int,
+        val newCasesAdjusted: Long
+    )
 
     private fun getRegionalTotals(sequence: Sequence<String>): List<Int> {
         return sequence.drop(1)

@@ -1,8 +1,8 @@
-Schuylkill
-Berks
-Lancaster
-Chester
-Montgomery
-Bucks
-Delaware
-Philadelphia
+Schuylkill,142067
+Berks,420152
+Lancaster,543557
+Chester,522046
+Montgomery,828604
+Bucks,628195
+Delaware,564751
+Philadelphia,1584138
