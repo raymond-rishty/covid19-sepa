@@ -1,5 +1,6 @@
 package rrishty.covid19sepa
 
+import com.amazonaws.services.lambda.runtime.LambdaLogger
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
@@ -10,23 +11,32 @@ class Application(
     private val covidCasesDao: CovidCasesDao,
     private val s3Writer: S3Writer,
     private val state: String,
-    private val regionalCounties: Map<String, Int>
+    private val regionalCounties: Map<String, Int>,
+    private val logger: LambdaLogger?
 ) {
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) {
+        fun main(args: Array<String>) = execute()
+
+        fun execute(logger: LambdaLogger? = null) {
             val covidCasesDao = CovidCasesDao()
             val (bucketName: String, keyName: String, regionName: String) = getS3Properties()
             val s3Writer = S3Writer(bucketName, keyName, regionName)
 
             val counties = getCounties()
+            val state = "Pennsylvania"
+
+            logger?.log("Running for ${counties.size} counties in ${state}; population ${counties.values.sum()}")
+            logger?.log("Will write report to s3://$bucketName/$keyName")
 
             val application = Application(
                 covidCasesDao = covidCasesDao,
                 s3Writer = s3Writer,
-                state = "Pennsylvania",
-                regionalCounties = counties
+                state = state,
+                regionalCounties = counties,
+                logger = logger
             )
+
             application.run()
         }
 
@@ -49,9 +59,13 @@ class Application(
 
     fun run() {
         val sequence = covidCasesDao.getRawData()
+        logger?.log("Found data")
         val regionalTotals = getRegionalTotals(sequence)
+        logger?.log("Found ${regionalTotals.size} data points")
         val csvContents = formatResults(regionalTotals)
+        logger?.log("Created CSV data")
         s3Writer.writeCsvContentsToS3(csvContents)
+        logger?.log("Wrote contents to S3")
     }
 
     private fun formatResults(regionalTotals: List<Int>): String {

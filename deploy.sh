@@ -1,0 +1,2 @@
+sam package --profile rrishty --template-file sam.yaml --s3-bucket lambda-artifacts.rrishty --output-template-file packaged.yaml
+sam deploy --profile rrishty --region us-east-1 --template-file ./packaged.yaml --stack-name covid-19-sepa-report --capabilities CAPABILITY_IAM

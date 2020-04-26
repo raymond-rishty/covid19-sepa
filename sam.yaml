@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  Covid19SepaLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/covid19sepa-1.0.zip
+      Handler: rrishty.covid19sepa.LambdaHandler::handleRequest
+      Runtime: java8
+      MemorySize: 320
+      Timeout: 90
+      Events:
+        Covid19SepaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
