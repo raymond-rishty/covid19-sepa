@@ -14,3 +14,6 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: 'cron(10 * ? * * *)'
+      Policies:
+        - S3WritePolicy:
+            BucketName: "covid19.data.rrishty"

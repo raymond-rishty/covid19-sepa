@@ -53,19 +53,19 @@ class Application(
             .readText()
             .split(System.lineSeparator())
             .map { it.split(',') }
-            .map { (county, population) -> county to population.toInt() }
+            .map { (county, population) -> county to population.trim().toInt() }
             .toMap()
     }
 
     fun run() {
         val sequence = covidCasesDao.getRawData()
-        logger?.log("Found data")
+        logger?.log("Found data\n")
         val regionalTotals = getRegionalTotals(sequence)
-        logger?.log("Found ${regionalTotals.size} data points")
+        logger?.log("Found ${regionalTotals.size} data points\n")
         val csvContents = formatResults(regionalTotals)
-        logger?.log("Created CSV data")
+        logger?.log("Created CSV data\n")
         s3Writer.writeCsvContentsToS3(csvContents)
-        logger?.log("Wrote contents to S3")
+        logger?.log("Wrote contents to S3\n")
     }
 
     private fun formatResults(regionalTotals: List<Int>): String {
