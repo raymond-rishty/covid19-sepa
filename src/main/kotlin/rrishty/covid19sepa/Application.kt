@@ -1,16 +1,15 @@
 package rrishty.covid19sepa
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger
+import rrishty.covid19sepa.DataParser.parse
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
-import rrishty.covid19sepa.DataParser.parse
 import java.util.*
 
 class Application(
     private val covidCasesDao: CovidCasesDao,
     private val s3Writer: S3Writer,
-    private val state: String,
     private val regionalCounties: Map<String, Int>,
     private val logger: LambdaLogger?
 ) {
@@ -24,15 +23,13 @@ class Application(
             val s3Writer = S3Writer(bucketName, keyName, regionName)
 
             val counties = getCounties()
-            val state = "Pennsylvania"
 
-            logger?.log("Running for ${counties.size} counties in ${state}; population ${counties.values.sum()}")
+            logger?.log("Running for ${counties.size}; population ${counties.values.sum()}")
             logger?.log("Will write report to s3://$bucketName/$keyName")
 
             val application = Application(
                 covidCasesDao = covidCasesDao,
                 s3Writer = s3Writer,
-                state = state,
                 regionalCounties = counties,
                 logger = logger
             )
@@ -51,9 +48,9 @@ class Application(
 
         private fun getCounties(): Map<String, Int> = Application::class.java.getResource("/regioncounties.txt")
             .readText()
-            .split(System.lineSeparator())
+            .split("\n")
             .map { it.split(',') }
-            .map { (county, population) -> county to population.trim().toInt() }
+            .map { (uid, _, population) -> uid to population.trim().toInt() }
             .toMap()
     }
 
@@ -105,9 +102,9 @@ class Application(
 
     private fun getRegionalTotals(sequence: Sequence<String>): List<Int> {
         return sequence.drop(1)
+            .filter { it.split(',', limit = 2).first() in regionalCounties }
             .map { it.parse() }
-            .filter { it.provinceState == state }
-            .filter { it.admin2 in regionalCounties }
+            .filter { it.uid in regionalCounties }
             .map { it.dailyData }
             .reduce { regionTotals, countyData -> regionTotals.zip(countyData) { left, right -> left + right } }
     }
