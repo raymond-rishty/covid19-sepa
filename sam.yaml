@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  Covid19SepaLambda:
+  Covid19RegionalPaLambda:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: build/distributions/covid19sepa-1.0.zip
@@ -10,10 +10,36 @@ Resources:
       MemorySize: 320
       Timeout: 90
       Events:
-        Covid19SepaSchedule:
+        NwpaCovid19Schedule:
           Type: Schedule
           Properties:
             Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Northwest"}'
+        NcpaCovid19Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Northcentral"}'
+        NepaCovid19Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Northeast"}'
+        SwpaCovid19Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Southwest"}'
+        ScpaCovid19Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Southcentral"}'
+        SepaCovid19Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Southeast"}'
       Policies:
         - S3WritePolicy:
             BucketName: "covid19.data.rrishty"

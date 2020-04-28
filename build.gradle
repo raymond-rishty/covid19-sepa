@@ -16,6 +16,10 @@ dependencies {
     implementation("software.amazon.awssdk:lambda")
     implementation("software.amazon.awssdk:apache-client")
     implementation("com.amazonaws:aws-lambda-java-core:1.2.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9")
+
+    testImplementation("junit:junit:4.12")
+    testImplementation("org.assertj:assertj-core:3.11.1")
 }
 
 compileKotlin {

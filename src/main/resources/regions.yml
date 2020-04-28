@@ -1,0 +1,73 @@
+Northwest:
+  - Erie
+  - Crawford
+  - Mercer
+  - Lawrence
+  - Warren
+  - Venango
+  - Forest
+  - Clarion
+  - McKean
+  - Elk
+  - Jefferson
+  - Cameron
+  - Clearfield
+Northcentral:
+  - Potter
+  - Clinton
+  - Centre
+  - Tioga
+  - Lycoming
+  - Union
+  - Snyder
+  - Bradford
+  - Sullivan
+  - Columbia
+  - Montour
+  - Northumberland
+Northeast:
+  - Susquehanna
+  - Wayne
+  - Wyoming
+  - Lackawanna
+  - Pike
+  - Luzerne
+  - Monroe
+  - Carbon
+  - Lehigh
+  - Northampton
+Southwest:
+  - Beaver
+  - Butler
+  - Allegheny
+  - Washington
+  - Greene
+  - Fayette
+  - Armstrong
+  - Westmoreland
+  - Indiana
+  - Somerset
+  - Cambria
+Southcentral:
+  - Adams
+  - Bedford
+  - Blair
+  - Cumberland
+  - Dauphin
+  - Franklin
+  - Fulton
+  - Huntingdon
+  - Juniata
+  - Lebanon
+  - Mifflin
+  - Perry
+  - York
+Southeast:
+  - Schuylkill
+  - Berks
+  - Lancaster
+  - Chester
+  - Montgomery
+  - Bucks
+  - Delaware
+  - Philadelphia

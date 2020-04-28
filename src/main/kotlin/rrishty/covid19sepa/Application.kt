@@ -15,16 +15,17 @@ class Application(
 ) {
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) = execute()
+        fun main(args: Array<String>) = execute("Southeast")
 
-        fun execute(logger: LambdaLogger? = null) {
+        fun execute(regionName: String, logger: LambdaLogger? = null) {
             val covidCasesDao = CovidCasesDao()
-            val (bucketName: String, keyName: String, regionName: String) = getS3Properties()
-            val s3Writer = S3Writer(bucketName, keyName, regionName)
+            val (bucketName: String, keyNameTemplate: String, awsRegionName: String) = getS3Properties()
+            val keyName = keyNameTemplate.replace("{region}", regionName.toLowerCase())
+            val s3Writer = S3Writer(bucketName, keyName, awsRegionName)
 
-            val counties = getCounties()
+            val counties = RegionResolver().countiesForRegion(regionName)
 
-            logger?.log("Running for ${counties.size}; population ${counties.values.sum()}")
+            logger?.log("Running for ${counties.size} counties in the $regionName region; population ${counties.values.sum()}")
             logger?.log("Will write report to s3://$bucketName/$keyName")
 
             val application = Application(
@@ -45,14 +46,9 @@ class Application(
             val regionName: String = properties.getProperty("regionName")
             return Triple(bucketName, keyName, regionName)
         }
-
-        private fun getCounties(): Map<String, Int> = Application::class.java.getResource("/regioncounties.txt")
-            .readText()
-            .split("\n")
-            .map { it.split(',') }
-            .map { (uid, _, population) -> uid to population.trim().toInt() }
-            .toMap()
     }
+
+    data class County(val uid: String, val countyName: String, val population: Int)
 
     fun run() {
         val sequence = covidCasesDao.getRawData()
