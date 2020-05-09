@@ -98,12 +98,14 @@ class Application(
 
     private fun getRegionalTotals(sequence: Sequence<String>): List<Int> {
         return sequence.drop(1)
-            .filter { it.split(',', limit = 2).first() in regionalCounties }
+            .filter { (it.split(',', limit = 2).first()).uidWithSuffix() in regionalCounties }
             .map { it.parse() }
-            .filter { it.uid in regionalCounties }
+            .filter { it.uid.uidWithSuffix() in regionalCounties }
             .map { it.dailyData }
             .reduce { regionTotals, countyData -> regionTotals.zip(countyData) { left, right -> left + right } }
     }
+
+    private fun String.uidWithSuffix() = if (!endsWith(".0")) "${this}.0" else this
 
     private val startingDate = LocalDate.of(2020, Month.JANUARY, 22)
 }
