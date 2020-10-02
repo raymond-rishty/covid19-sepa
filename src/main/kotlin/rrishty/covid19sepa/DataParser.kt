@@ -17,7 +17,7 @@ object DataParser {
             lat = fields[8],
             long = fields[9],
             combinedKey = fields[10],
-            dailyData = fields.last().split(',').map { it.toInt() }
+            dailyData = fields.last().split(',').map { it.toDouble().toInt() }
         )
     }
 }

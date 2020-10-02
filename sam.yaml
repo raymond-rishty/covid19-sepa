@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  Covid19RegionalPaLambda:
+  Covid19Lambda:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: build/distributions/covid19sepa-1.0.zip
@@ -40,6 +40,42 @@ Resources:
           Properties:
             Schedule: 'cron(10 * ? * * *)'
             Input: '{"regionName": "Southeast"}'
+        TotalCovid19Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Pennsylvania"}'
+        ChescoCovid19Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Chestercounty"}'
+        CentreCoCovid19Sched:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Centrecounty"}'
+        AlbemarleCoCovid19Sched:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Albemarlecounty"}'
+        CVilleCovid19Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Charlottesville"}'
+        CumberlandCoCovid19Sched:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Cumberlandcounty"}'
+        BexarCoCovid19Sched:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(10 * ? * * *)'
+            Input: '{"regionName": "Bexarcounty"}'
       Policies:
         - S3WritePolicy:
             BucketName: "covid19.data.rrishty"
+            ffgdgdfgdgd

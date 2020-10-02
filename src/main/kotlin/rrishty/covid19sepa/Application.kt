@@ -97,10 +97,12 @@ class Application(
     )
 
     private fun getRegionalTotals(sequence: Sequence<String>): List<Int> {
-        return sequence.drop(1)
+        val dataForCounties = sequence.drop(1)
             .filter { (it.split(',', limit = 2).first()).uidWithSuffix() in regionalCounties }
             .map { it.parse() }
             .filter { it.uid.uidWithSuffix() in regionalCounties }
+            .toList()
+        return dataForCounties
             .map { it.dailyData }
             .reduce { regionTotals, countyData -> regionTotals.zip(countyData) { left, right -> left + right } }
     }
